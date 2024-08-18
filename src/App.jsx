@@ -5,11 +5,14 @@ import Watchlist from "./Components/Watchlist"
 import { Routes,Route } from "react-router-dom"
 import './App.css'
 import WatchListContextWrapper from "./Context/WathclistContext"
+import { Provider } from "react-redux";
+import store from "./redux/store"
 
 function App() {
  
 
   return (
+    <Provider store={store}>
     <Fragment>
       <Navbar/>
      <WatchListContextWrapper>
@@ -19,6 +22,7 @@ function App() {
     </Routes>
     </WatchListContextWrapper>
     </Fragment>
+    </Provider>
    )
 }
 

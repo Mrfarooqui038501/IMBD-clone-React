@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import genreids from "./Constants";
+import React, { useEffect, useState } from 'react'
+import genreids from '../Components/Constants';
 
 const ALL_GENRES = 'All genres';
 

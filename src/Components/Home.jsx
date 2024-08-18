@@ -1,19 +1,29 @@
 import React, { useEffect } from 'react'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Pagination from './Pagination'
 import MovieCard from './MovieCard'
 import Banner from './Banner'
 import axios from 'axios'
+import {WatchListContext} from "../Context/WathclistContext"
+import { useSelector, useDispatch } from 'react-redux'
 
+import PaginationSlice from "../redux/paginationSlice";
+const paginationActions = PaginationSlice.actions;
 
 function Movies() {
   const [movies, setMovies] = useState([
   ])
-  const [pageNo, setPageNo] = useState(1);
+  // const [pageNo, setPageNo] = useState(1);
 
-  const [watchList, setWatchList] = useState([])
+  const { pageNo } = useSelector((state) => state.PaginationSlice);
+  const dispatch = useDispatch();
 
+  // const [watchList, setWatchList] = useState([])
 
+  const { addToWatchList, removeFromWatchList, watchList, setWatchList } = useContext(WatchListContext)
+  console.log(addToWatchList, '[addToWatchList]')
+  console.log(removeFromWatchList, '[removeFromWatchList]')
+  console.log(watchList, '[watchList]')
   useEffect(() => {
     axios.get(`https://api.themoviedb.org/3/trending/movie/day?api_key=e278e3c498ab14e0469bf6d86da17045&language=en-US&page=${pageNo}`)
       .then(function (response) {
@@ -32,40 +42,48 @@ function Movies() {
       });
   }, [pageNo])
 
-    useEffect(() =>{
-     const watchListMovies = localStorage.getItem('movies')
-     if(watchListMovies){
+  useEffect(() => {
+    // on page load, set the watchlist from LS
+    const watchListMovies = localStorage.getItem('movies');
+    if (watchListMovies) {
+      // setWatchList(watchListMovies); // wrong
       setWatchList(JSON.parse(watchListMovies));
-     }
-    },[])
-
-  const handleNext = () => {
-    // increment pageNo.
-    setPageNo(pageNo + 1);
-  }
-
-  const handlePrev = () => {
-    // decrement page no.
-    if (pageNo === 1) {
-      setPageNo(1);
-    } else {
-      setPageNo(pageNo - 1)
     }
+  }, [])
+
+  const handleNextPage = () => {
+    // increment pageNo.
+    // setPageNo(pageNo + 1);
+    dispatch(paginationActions.handleNext());
+
   }
 
-  const addToWatchList = (movieObj) => {
-    const updatedMovies = [...watchList, movieObj]
-    setWatchList(updatedMovies);
-    localStorage.setItem('movies',JSON.stringify(updatedMovies))
+  const handlePrevious = () => {
+    dispatch(paginationActions.handlePrevious());
   }
 
-  const removeFromWatchList = movieObj => {
-    const filteredMovies = watchList.filter((watchListMovie) => {
-      return movieObj.id !== watchListMovie.id
-    })
-    setWatchList(filteredMovies);
-    localStorage.setItem('movies',JSON.stringify(filteredMovies))
-  }
+  // const handlePrev = () => {
+  //   // decrement page no.
+  //   if (pageNo === 1) {
+  //     setPageNo(1);
+  //   } else {
+  //     setPageNo(pageNo - 1)
+  //   }
+  // }
+
+  // const addToWatchList = (movieObj) => {
+  //   const updatedMovies = [...watchList, movieObj]
+  //   setWatchList(updatedMovies);
+  //   localStorage.setItem('movies', JSON.stringify(updatedMovies))
+  // }
+
+  // const removeFromWatchList = movieObj => {
+  //   const filteredMovies = watchList.filter((watchListMovie) => {
+  //     return movieObj.id !== watchListMovie.id
+  //   })
+  //   setWatchList(filteredMovies);
+  //   localStorage.setItem('movies', JSON.stringify(filteredMovies))
+  // }
 
 
   return <>
@@ -86,8 +104,15 @@ function Movies() {
 
 
 
+
     {/* for pagination:: */}
-    <Pagination handleNext={handleNext} handlePrev={handlePrev} pageNo={pageNo} />
+
+
+    <Pagination
+      nextPageFn={handleNextPage}
+      previousPageFn={handlePrevious}
+      pageNo={pageNo}
+    />
 
   </>
 }

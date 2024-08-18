@@ -34,13 +34,13 @@ const MovieCard = (props) => {
                             onClick={() => removeFromWatchList(movieObj)}
                         // onClick={removeFromWatchList(movieObj)} WRONG, as directly we are invoking. we just want to attach the function reference.
                         >
-                            ❎
+                            ❌
                         </div>
                         : < div
                             className='m-4 bg-gray-700/60 justify-center items-center rounded-md flex h-8 w-8'
                             onClick={() => addToWatchList(movieObj)}
                         >
-                            📺
+                            😍
                         </div>
                     }
                     <div className='text-white w-full text-center p-2 rounded-lg bg-gray-900/50'>
